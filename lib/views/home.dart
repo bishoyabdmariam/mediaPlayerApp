@@ -1,74 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mediaplayerapp/consts/colors.dart';
 import 'package:mediaplayerapp/consts/textStyle.dart';
+import 'package:mediaplayerapp/controller/playerController.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(PlayerController());
     return Scaffold(
       backgroundColor: bgDarkColor,
-        appBar: AppBar(
-          backgroundColor: bgDarkColor,
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.search,
-                color: whiteColor,
-              ),
+      appBar: AppBar(
+        backgroundColor: bgDarkColor,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.search,
+              color: whiteColor,
             ),
-          ],
-          leading: const Icon(
-            Icons.sort_rounded,
-            color: whiteColor,
           ),
-          title: Text(
-            "Beats",
-            style: myStyle(
-              family: "bold",
-              size: 18,
-            ),
+        ],
+        leading: const Icon(
+          Icons.sort_rounded,
+          color: whiteColor,
+        ),
+        title: Text(
+          "Beats",
+          style: myStyle(
+            family: "bold",
+            size: 18,
           ),
         ),
-        body: ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: 100,
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                tileColor: bgColor,
-                title: Text(
-                  "Music Name",
-                  style: myStyle(
-                    family: "bold",
-                    size: 15,
-                  ),
-                ),
-                subtitle: Text(
-                  "Artist Name",
-                  style: myStyle(
-                    family: "regular",
-                    size: 12,
-                  ),
-                ),
-                leading: const Icon(
-                  Icons.music_note,
-                  color: whiteColor,
-                  size: 32,
-                ),
-                trailing: const Icon(
-                  Icons.play_arrow,
-                  color: whiteColor,
-                  size: 26,
-                ),
-              ),
+      ),
+      body: FutureBuilder<List<SongModel>>(
+        future: controller.audioQuery.querySongs(
+          ignoreCase: true,
+          orderType: OrderType.ASC_OR_SMALLER,
+          sortType: null,
+          uriType: UriType.EXTERNAL,
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasData == false || snapshot.data == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ));
+          }
+          if (snapshot.data!.isEmpty ) {
+            return const Center(
+              child: Text("SomeThing went Wrong",),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.only(bottom: 4),
+                  child: ListTile(
+                    tileColor: bgColor,
+                    title: Text(
+                      snapshot.data![index].displayName,
+                      style: myStyle(
+                        family: "bold",
+                        size: 15,
+                      ),
+                    ),
+                    subtitle: Text(
+                      snapshot.data![index].artist != null ? snapshot.data![index].artist! : "Unknown",
+                      style: myStyle(
+                        family: "regular",
+                        size: 12,
+                      ),
+                    ),
+                    leading: const Icon(
+                      Icons.music_note,
+                      color: whiteColor,
+                      size: 32,
+                    ),
+                    trailing: const Icon(
+                      Icons.play_arrow,
+                      color: whiteColor,
+                      size: 26,
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }
