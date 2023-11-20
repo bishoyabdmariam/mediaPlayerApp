@@ -92,29 +92,36 @@ class _PlayerState extends State<Player> {
                     const SizedBox(
                       height: 12,
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          "0:0",
-                          style: myStyle(
-                            color: bgDarkColor,
+                    Obx(
+                      ()=> Row(
+                        children: [
+                          Text(
+                            controller.position.value,
+                            style: myStyle(
+                              color: bgDarkColor,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            thumbColor: sliderColor,
-                            inactiveColor: bgDarkColor,
-                            value: 0.0,
-                            onChanged: (newValue) {},
+                          Expanded(
+                            child: Slider(
+                              min: const Duration(seconds: 0).inSeconds.toDouble(),
+                              max: controller.max.value,
+                              thumbColor: sliderColor,
+                              inactiveColor: bgDarkColor,
+                              value: controller.value.value,
+                              onChanged: (newValue) {
+                                controller.changeDurationToSeconds(newValue.toInt());
+                                newValue = newValue;
+                              },
+                            ),
                           ),
-                        ),
-                        Text(
-                          (widget.song.duration! / 60).toString(),
-                          style: myStyle(
-                            color: bgDarkColor,
+                          Text(
+                            controller.duration.value,
+                            style: myStyle(
+                              color: bgDarkColor,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 12,

@@ -11,11 +11,37 @@ final audioPlayer = AudioPlayer();
 RxInt playIndex =0.obs ;
 var isPlay = false.obs;
 
+var max = 0.0.obs;
+var value = 0.0.obs;
+
+var duration = ''.obs;
+var position = ''.obs;
+
 @override
   void onInit() {
     checkPermission();
     super.onInit();
   }
+
+
+  updatePosition(){
+    audioPlayer.durationStream.listen((durationEvent) {
+      duration.value = durationEvent.toString().split(".")[0];
+      max.value = durationEvent!.inSeconds.toDouble();
+    });
+    audioPlayer.positionStream.listen((positionEvent) {
+      position.value = positionEvent.toString().split(".")[0];
+      value.value = positionEvent!.inSeconds.toDouble();
+
+    });
+  }
+
+
+  changeDurationToSeconds(seconds){
+    var duration = Duration(seconds: seconds);
+    audioPlayer.seek(duration);
+  }
+
 
   playSong(String? uri , int index){
   playIndex.value = index;
@@ -25,6 +51,7 @@ var isPlay = false.obs;
       );
       audioPlayer.play();
       isPlay(true);
+      updatePosition();
     } on Exception catch (e){
       print(e.toString());
     }
