@@ -29,7 +29,7 @@ var isPlay = false.obs;
       print(e.toString());
     }
   }
-
+/*
 pauseSong(String? uri ){
   try{
     audioPlayer.setAudioSource(
@@ -39,7 +39,7 @@ pauseSong(String? uri ){
   } on Exception catch (e){
     print(e.toString());
   }
-}
+}*/
 
 
   checkPermission()async{

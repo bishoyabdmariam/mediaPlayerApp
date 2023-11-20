@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mediaplayerapp/consts/colors.dart';
 import 'package:mediaplayerapp/consts/textStyle.dart';
 import 'package:mediaplayerapp/controller/playerController.dart';
+import 'package:mediaplayerapp/views/player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class Home extends StatelessWidget {
@@ -67,7 +68,7 @@ class Home extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 4),
                   child: Obx(
                     () => ListTile(
-                      tileColor: bgColor,
+                      tileColor: bgDarkColor,
                       title: Text(
                         snapshot.data![index].displayNameWOExt,
                         style: myStyle(
@@ -106,6 +107,14 @@ class Home extends StatelessWidget {
                               size: 26,
                             ),
                       onTap: () {
+                        Get.to(
+                          () => Player(
+                            song: snapshot.data![index],
+                            index: index,
+                          ),
+                          transition: Transition.downToUp,
+                        );
+
                         controller.playSong(snapshot.data![index].uri, index);
                       },
                     ),
