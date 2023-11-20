@@ -109,7 +109,7 @@ class Home extends StatelessWidget {
                       onTap: () {
                         Get.to(
                           () => Player(
-                            song: snapshot.data![index],
+                            song: snapshot.data!,
                             index: index,
                           ),
                           transition: Transition.downToUp,
