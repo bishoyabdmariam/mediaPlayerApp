@@ -10,6 +10,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isPlay = false;
     var controller = Get.put(PlayerController());
     return Scaffold(
       backgroundColor: bgDarkColor,
@@ -49,9 +50,11 @@ class Home extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          if (snapshot.data!.isEmpty ) {
+          if (snapshot.data!.isEmpty) {
             return const Center(
-              child: Text("SomeThing went Wrong",),
+              child: Text(
+                "SomeThing went Wrong",
+              ),
             );
           }
           return Padding(
@@ -62,31 +65,49 @@ class Home extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Container(
                   margin: EdgeInsets.only(bottom: 4),
-                  child: ListTile(
-                    tileColor: bgColor,
-                    title: Text(
-                      snapshot.data![index].displayName,
-                      style: myStyle(
-                        family: "bold",
-                        size: 15,
+                  child: Obx(
+                    () => ListTile(
+                      tileColor: bgColor,
+                      title: Text(
+                        snapshot.data![index].displayNameWOExt,
+                        style: myStyle(
+                          family: "bold",
+                          size: 15,
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      snapshot.data![index].artist != null ? snapshot.data![index].artist! : "Unknown",
-                      style: myStyle(
-                        family: "regular",
-                        size: 12,
+                      subtitle: Text(
+                        snapshot.data![index].artist != null
+                            ? snapshot.data![index].artist!
+                            : "Unknown",
+                        style: myStyle(
+                          family: "regular",
+                          size: 12,
+                        ),
                       ),
-                    ),
-                    leading: const Icon(
-                      Icons.music_note,
-                      color: whiteColor,
-                      size: 32,
-                    ),
-                    trailing: const Icon(
-                      Icons.play_arrow,
-                      color: whiteColor,
-                      size: 26,
+                      leading: QueryArtworkWidget(
+                        id: snapshot.data![index].id,
+                        type: ArtworkType.AUDIO,
+                        nullArtworkWidget: const Icon(
+                          Icons.music_note,
+                          color: whiteColor,
+                          size: 32,
+                        ),
+                      ),
+                      trailing: controller.playIndex.value == index &&
+                              controller.isPlay.value == true
+                          ? const Icon(
+                              Icons.pause,
+                              color: whiteColor,
+                              size: 26,
+                            )
+                          : const Icon(
+                              Icons.play_arrow,
+                              color: whiteColor,
+                              size: 26,
+                            ),
+                      onTap: () {
+                        controller.playSong(snapshot.data![index].uri, index);
+                      },
                     ),
                   ),
                 );
