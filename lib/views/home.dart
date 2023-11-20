@@ -11,7 +11,6 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isPlay = false;
     var controller = Get.put(PlayerController());
     return Scaffold(
       backgroundColor: bgDarkColor,
@@ -65,7 +64,7 @@ class Home extends StatelessWidget {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 return Container(
-                  margin: EdgeInsets.only(bottom: 4),
+                  margin: const EdgeInsets.only(bottom: 4),
                   child: Obx(
                     () => ListTile(
                       tileColor: bgDarkColor,

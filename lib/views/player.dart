@@ -42,7 +42,7 @@ class _PlayerState extends State<Player> {
                   height: 300,
                   width: 300,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
                   child: QueryArtworkWidget(
@@ -84,7 +84,7 @@ class _PlayerState extends State<Player> {
                           size: 24,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
                       Text(
@@ -132,7 +132,7 @@ class _PlayerState extends State<Player> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
                       Row(
@@ -142,7 +142,7 @@ class _PlayerState extends State<Player> {
                             onPressed: () {
                               controller.playSong(widget.song[controller.playIndex.value-1].uri, controller.playIndex.value-1);
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.skip_previous_rounded,
                               size: 40,
                               color: bgDarkColor,
@@ -168,11 +168,11 @@ class _PlayerState extends State<Player> {
                                       }
                                     },
                                     icon: controller.isPlay.value
-                                        ? Icon(
+                                        ? const Icon(
                                             Icons.pause_rounded,
                                             color: whiteColor,
                                           )
-                                        : Icon(
+                                        : const Icon(
                                             Icons.play_arrow_rounded,
                                             color: whiteColor,
                                           ),
@@ -184,7 +184,7 @@ class _PlayerState extends State<Player> {
                               controller.playSong(widget.song[controller.playIndex.value+1].uri, controller.playIndex.value+1);
 
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.skip_next_rounded,
                               size: 40,
                               color: bgDarkColor,

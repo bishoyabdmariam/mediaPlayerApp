@@ -31,7 +31,7 @@ var position = ''.obs;
     });
     audioPlayer.positionStream.listen((positionEvent) {
       position.value = positionEvent.toString().split(".")[0];
-      value.value = positionEvent!.inSeconds.toDouble();
+      value.value = positionEvent.inSeconds.toDouble();
 
     });
   }
