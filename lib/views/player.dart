@@ -21,9 +21,13 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
+  var controller = Get.find<PlayerController>();
+  @override
+  void initState() {
+    super.initState(); // Initialize the controller with the song list
+  }
   @override
   Widget build(BuildContext context) {
-    var controller = Get.find<PlayerController>();
     return Scaffold(
       backgroundColor: bgDarkColor,
       appBar: AppBar(
@@ -36,7 +40,7 @@ class _PlayerState extends State<Player> {
         child: Column(
           children: [
             Obx(
-            ()=> Expanded(
+              () => Expanded(
                 child: Container(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   height: 300,
@@ -71,10 +75,11 @@ class _PlayerState extends State<Player> {
                   color: whiteColor,
                 ),
                 child: Obx(
-                  ()=> Column(
+                  () => Column(
                     children: [
                       Text(
-                        widget.song[controller.playIndex.value].displayNameWOExt,
+                        widget
+                            .song[controller.playIndex.value].displayNameWOExt,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
@@ -88,7 +93,9 @@ class _PlayerState extends State<Player> {
                         height: 12,
                       ),
                       Text(
-                        widget.song[controller.playIndex.value].artist == null ? "UnKnown" : widget.song[controller.playIndex.value].artist!,
+                        widget.song[controller.playIndex.value].artist == null
+                            ? "UnKnown"
+                            : widget.song[controller.playIndex.value].artist!,
                         style: myStyle(
                           color: bgDarkColor,
                           family: "regular",
@@ -102,7 +109,7 @@ class _PlayerState extends State<Player> {
                         height: 12,
                       ),
                       Obx(
-                        ()=> Row(
+                        () => Row(
                           children: [
                             Text(
                               controller.position.value,
@@ -112,13 +119,26 @@ class _PlayerState extends State<Player> {
                             ),
                             Expanded(
                               child: Slider(
-                                min: const Duration(seconds: 0).inSeconds.toDouble(),
+                                onChangeEnd: (d) {
+                                  if (d >= controller.max.value) {
+                                    controller.playSong(
+                                        widget
+                                            .song[
+                                                controller.playIndex.value + 1]
+                                            .uri,
+                                        controller.playIndex.value + 1);
+                                  }
+                                },
+                                min: const Duration(seconds: 0)
+                                    .inSeconds
+                                    .toDouble(),
                                 max: controller.max.value,
                                 thumbColor: sliderColor,
                                 inactiveColor: bgDarkColor,
                                 value: controller.value.value,
                                 onChanged: (newValue) {
-                                  controller.changeDurationToSeconds(newValue.toInt());
+                                  controller.changeDurationToSeconds(
+                                      newValue.toInt());
                                   newValue = newValue;
                                 },
                               ),
@@ -140,7 +160,10 @@ class _PlayerState extends State<Player> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              controller.playSong(widget.song[controller.playIndex.value-1].uri, controller.playIndex.value-1);
+                              controller.playSong(
+                                  widget
+                                      .song[controller.playIndex.value - 1].uri,
+                                  controller.playIndex.value - 1);
                             },
                             icon: const Icon(
                               Icons.skip_previous_rounded,
@@ -149,40 +172,45 @@ class _PlayerState extends State<Player> {
                             ),
                           ),
                           Obx(
-                              ()=> CircleAvatar(
+                            () => CircleAvatar(
                                 backgroundColor: bgDarkColor,
                                 radius: 35,
                                 child: Transform.scale(
                                   scale: 2.5,
                                   child: IconButton(
-                                    onPressed: () {
-                                      if(controller.isPlay.value)
-                                      {
-                                        controller.audioPlayer.pause();
-                                        controller.isPlay(false);
-                                      }
-                                          else {
-                                        controller.audioPlayer.play();
-                                        controller.isPlay(true);
+                                      onPressed: () {
+                                        if (controller.isPlay.value) {
+                                          controller.audioPlayer.pause();
+                                          controller.isPlay(false);
+                                        } else {
+                                          controller.audioPlayer.play();
+                                          controller.isPlay(true);
+                                            if(controller.value.value >= controller.max.value){
 
-                                      }
-                                    },
-                                    icon: controller.isPlay.value
-                                        ? const Icon(
-                                            Icons.pause_rounded,
-                                            color: whiteColor,
-                                          )
-                                        : const Icon(
-                                            Icons.play_arrow_rounded,
-                                            color: whiteColor,
-                                          ),
-                                  ),
+                                              controller.playSong(widget.song[controller.playIndex.value+1].uri, controller.playIndex.value+1);
+                                            }
+
+                                        }
+                                      },
+                                      icon: controller.isPlay.value
+                                          ? const Icon(
+                                              Icons.pause_rounded,
+                                              color: whiteColor,
+                                            )
+                                          : const Icon(
+                                              Icons.play_arrow_rounded,
+                                              color: whiteColor,
+                                            ),
+                                    ),
+
                                 )),
                           ),
                           IconButton(
                             onPressed: () {
-                              controller.playSong(widget.song[controller.playIndex.value+1].uri, controller.playIndex.value+1);
-
+                              controller.playSong(
+                                  widget
+                                      .song[controller.playIndex.value + 1].uri,
+                                  controller.playIndex.value + 1);
                             },
                             icon: const Icon(
                               Icons.skip_next_rounded,
