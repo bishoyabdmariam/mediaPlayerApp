@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -42,9 +43,8 @@ class PlayerController extends GetxController {
 
         // Play the next song if available
         if (playIndex.value < songList.length - 1) {
-          playSong(songList[playIndex.value + 1].uri,
-              playIndex.value + 1);
-          playIndex.value ++;
+          playSong(songList[playIndex.value + 1].uri, playIndex.value + 1);
+          playIndex.value++;
         } else {
           // Loop to the beginning if no more songs
           playIndex.value = 0;
@@ -68,7 +68,17 @@ class PlayerController extends GetxController {
     playIndex.value = index;
     try {
       audioPlayer.setAudioSource(
-        AudioSource.uri(Uri.parse(uri!)),
+        AudioSource.uri(
+          Uri.parse(uri!),
+          tag: MediaItem(
+
+            id: '${songList[index].id}',
+            title: songList[index].displayNameWOExt,
+            album: '${songList[index].album}',
+            artist: '${songList[index].artist}',
+            playable: isPlay.value,
+          ),
+        ),
       );
       audioPlayer.play();
       isPlay(true);
