@@ -7,9 +7,14 @@ import 'package:mediaplayerapp/views/player.dart';
 import 'package:mediaplayerapp/views/search.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var controller = Get.put(PlayerController());
@@ -31,9 +36,18 @@ class Home extends StatelessWidget {
             ),
           ),
         ],
-        leading: const Icon(
-          Icons.sort_rounded,
-          color: whiteColor,
+        leading: IconButton(
+          onPressed: (){
+            controller.playIndex((controller.songList.length -controller.playIndex.value)-1);
+            controller.toggleSort();
+            setState(() {
+            });
+
+          },
+          icon: const Icon(
+            Icons.sort_rounded,
+            color: whiteColor,
+          ),
         ),
         title: Text(
           "Beats",
@@ -44,12 +58,7 @@ class Home extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<List<SongModel>>(
-        future: controller.audioQuery.querySongs(
-          ignoreCase: true,
-          orderType: OrderType.ASC_OR_SMALLER,
-          sortType: null,
-          uriType: UriType.EXTERNAL,
-        ),
+        future: controller.checkPermission(),
         builder: (context, snapshot) {
           if (snapshot.hasData == false || snapshot.data == null) {
             return const Center(

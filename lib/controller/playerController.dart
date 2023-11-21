@@ -11,7 +11,7 @@ class PlayerController extends GetxController {
   RxInt playIndex = 0.obs;
   var isPlay = false.obs;
   var isSongDone = false.obs;
-
+  RxBool isAsc = true.obs;
   var max = 0.0.obs;
   var value = 0.0.obs;
 
@@ -96,19 +96,26 @@ class PlayerController extends GetxController {
     }
     isPlay.toggle();
   }
-  checkPermission() async {
+
+  toggleSort() {
+    isAsc.toggle();
+  }
+
+  Future<List<SongModel>>? checkPermission() async {
     var perm = await Permission.audio.request();
     if (perm.isGranted) {
       // Fetch the list of songs
       var songs = await audioQuery.querySongs(
         ignoreCase: true,
-        orderType: OrderType.ASC_OR_SMALLER,
+        orderType: isAsc.value ? OrderType.ASC_OR_SMALLER : OrderType.DESC_OR_GREATER,
         sortType: null,
         uriType: UriType.EXTERNAL,
       );
       songList = songs;
+      return songs;
     } else {
       checkPermission();
+      return [];
     }
   }
 }
