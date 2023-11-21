@@ -88,6 +88,14 @@ class PlayerController extends GetxController {
     }
   }
 
+  togglePlayPause() {
+    if (isPlay.value) {
+      audioPlayer.pause();
+    } else {
+      audioPlayer.play();
+    }
+    isPlay.toggle();
+  }
   checkPermission() async {
     var perm = await Permission.audio.request();
     if (perm.isGranted) {
@@ -99,8 +107,6 @@ class PlayerController extends GetxController {
         uriType: UriType.EXTERNAL,
       );
       songList = songs;
-
-      // Play the first song
     } else {
       checkPermission();
     }

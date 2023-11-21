@@ -4,6 +4,7 @@ import 'package:mediaplayerapp/consts/colors.dart';
 import 'package:mediaplayerapp/consts/textStyle.dart';
 import 'package:mediaplayerapp/controller/playerController.dart';
 import 'package:mediaplayerapp/views/player.dart';
+import 'package:mediaplayerapp/views/search.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class Home extends StatelessWidget {
@@ -18,7 +19,12 @@ class Home extends StatelessWidget {
         backgroundColor: bgDarkColor,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: SongSearchDelegate(controller),
+              );
+            },
             icon: const Icon(
               Icons.search,
               color: whiteColor,
@@ -93,29 +99,59 @@ class Home extends StatelessWidget {
                           size: 32,
                         ),
                       ),
-                      trailing: controller.playIndex.value == index &&
-                              controller.isPlay.value == true
-                          ? const Icon(
-                              Icons.pause,
-                              color: whiteColor,
-                              size: 26,
-                            )
-                          : const Icon(
-                              Icons.play_arrow,
-                              color: whiteColor,
-                              size: 26,
-                            ),
-                      onTap: () {
-                        Get.to(
-                          () => Player(
-                            song: snapshot.data!,
-                            index: index,
-                          ),
-                          transition: Transition.downToUp,
-                        );
+                      trailing: IconButton(
+                        icon: controller.playIndex.value == index &&
+                            controller.isPlay.value == true
+                            ? const Icon(
+                          Icons.pause,
+                          color: whiteColor,
+                          size: 26,
+                        )
+                            : const Icon(
+                          Icons.play_arrow,
+                          color: whiteColor,
+                          size: 26,
+                        ),
+                        onPressed: () {
+                          if(controller.playIndex.value == index) {
+                            controller.togglePlayPause();
+                          }else{
+                            controller.playSong(snapshot.data![index].uri, index);
+                          }
+                        },
 
-                        controller.playSong(snapshot.data![index].uri, index);
+                      ),
+
+                      onTap: () {
+                        // Check if the onTap event is coming from the IconButton
+                        if (!controller.isPlay.value ) {
+                          // If not, navigate to the Player screen
+                          Get.to(
+                                () => Player(
+                              song: snapshot.data!,
+                              index: index,
+                            ),
+                            transition: Transition.downToUp,
+                          );
+                          controller.playSong(snapshot.data![index].uri, index);
+
+                        } else {
+                          // If it's coming from the IconButton, handle play/pause logic
+                          if (controller.playIndex.value == index) {
+                            // Toggle play/pause when the user taps on the ListTile
+                            controller.togglePlayPause();
+                          } else {
+                            // Play the selected song when tapping a different ListTile
+                            controller.playIndex.value = index;
+                            Get.to(
+                              transition: Transition.downToUp,
+                                ()=> Player(song: snapshot.data!, index: index,),
+                            );
+                            controller.playSong(snapshot.data![index].uri, index);
+                          }
+                        }
                       },
+
                     ),
                   ),
                 );
