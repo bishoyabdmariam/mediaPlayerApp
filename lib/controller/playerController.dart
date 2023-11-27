@@ -57,11 +57,29 @@ class PlayerController extends GetxController {
       }
     });
   }
-
-  changeDurationToSeconds(seconds) {
+  changeDurationToSeconds(int seconds) {
     var duration = Duration(seconds: seconds);
-    audioPlayer.seek(duration);
+
+    audioPlayer.durationStream.first.then((durationEvent) {
+      // Check if the specified duration is greater than or equal to the song's duration
+      if (duration >= durationEvent!) {
+        // Check if there is a next song
+        if (playIndex.value < songList.length - 1) {
+          // Play the next song
+          playSong(songList[playIndex.value + 1].uri, playIndex.value + 1);
+          playIndex.value++;
+        } else {
+          // If no next song, loop to the beginning
+          playIndex.value = 0;
+          playSong(songList[playIndex.value].uri, playIndex.value);
+        }
+      } else {
+        // Seek to the specified duration within the current song
+        audioPlayer.seek(duration);
+      }
+    });
   }
+
 
   playSong(String? uri, int index) {
     isSongDone(false);
@@ -71,7 +89,6 @@ class PlayerController extends GetxController {
         AudioSource.uri(
           Uri.parse(uri!),
           tag: MediaItem(
-
             id: '${songList[index].id}',
             title: songList[index].displayNameWOExt,
             album: '${songList[index].album}',

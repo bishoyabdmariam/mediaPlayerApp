@@ -119,26 +119,22 @@ class _PlayerState extends State<Player> {
                             ),
                             Expanded(
                               child: Slider(
-                                onChangeEnd: (d) {
-                                  if (d >= controller.max.value) {
-                                    controller.playSong(
-                                        controller.songList[controller.playIndex.value + 1].uri,
-                                        controller.playIndex.value + 1);
-                                  }
+                                onChangeStart: (d){
+                                  controller.togglePlayPause();
                                 },
-                                min: const Duration(seconds: 0)
-                                    .inSeconds
-                                    .toDouble(),
+                                onChangeEnd: (d){
+                                  controller.togglePlayPause();
+                                },
+                                min: const Duration(seconds: 0).inSeconds.toDouble(),
                                 max: controller.max.value,
                                 thumbColor: sliderColor,
                                 inactiveColor: bgDarkColor,
                                 value: controller.value.value,
                                 onChanged: (newValue) {
-                                  controller.changeDurationToSeconds(
-                                      newValue.toInt());
-                                  newValue = newValue;
+                                  controller.changeDurationToSeconds(newValue.toInt());
                                 },
                               ),
+
                             ),
                             Text(
                               controller.duration.value,
