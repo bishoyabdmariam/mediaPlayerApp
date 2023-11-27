@@ -122,10 +122,7 @@ class _PlayerState extends State<Player> {
                                 onChangeEnd: (d) {
                                   if (d >= controller.max.value) {
                                     controller.playSong(
-                                        widget
-                                            .song[
-                                                controller.playIndex.value + 1]
-                                            .uri,
+                                        controller.songList[controller.playIndex.value + 1].uri,
                                         controller.playIndex.value + 1);
                                   }
                                 },
