@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -57,6 +58,7 @@ class PlayerController extends GetxController {
       }
     });
   }
+
   changeDurationToSeconds(int seconds) {
     var duration = Duration(seconds: seconds);
 
@@ -79,7 +81,6 @@ class PlayerController extends GetxController {
       }
     });
   }
-
 
   playSong(String? uri, int index) {
     isSongDone(false);
@@ -117,22 +118,73 @@ class PlayerController extends GetxController {
   toggleSort() {
     isAsc.toggle();
   }
-
-  Future<List<SongModel>>? checkPermission() async {
+  Future<List<SongModel>> checkPermission() async {
     var perm = await Permission.audio.request();
+
     if (perm.isGranted) {
-      // Fetch the list of songs
-      var songs = await audioQuery.querySongs(
+      // Permission is granted, fetch the list of songs
+      List<SongModel> songs = await audioQuery.querySongs(
         ignoreCase: true,
         orderType: isAsc.value ? OrderType.ASC_OR_SMALLER : OrderType.DESC_OR_GREATER,
         sortType: null,
         uriType: UriType.EXTERNAL,
       );
-      songList = songs;
       return songs;
+    } else if (perm.isDenied || perm.isRestricted) {
+      // Permission is denied or restricted, handle it gracefully
+      await showPermissionSnackbar();
+      return checkPermission(); // Call the function recursively
+    } else if (perm.isPermanentlyDenied) {
+      // Permission is permanently denied, prompt the user to open settings
+      await showPermissionPermanentlyDeniedDialog();
+      return checkPermission();
     } else {
-      checkPermission();
-      return [];
+      // Handle other permission statuses (e.g., asking again later)
+      return checkPermission();
     }
   }
+
+  Future<void> showPermissionSnackbar() async {
+
+    Get.snackbar(
+      'Permission Denied',
+      'Please grant access to your device\'s audio to use this feature.',
+      duration: const Duration(seconds: 5),
+      snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () {
+          openAppSettings(); // Open app settings so the user can grant the permission manually
+        },
+        child: const Text(
+          'Open Settings',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+
+  Future<void> showPermissionPermanentlyDeniedDialog() async {
+    // You can customize this dialog to provide more information or options to the user
+    await Get.defaultDialog(
+      title: 'Permission Denied',
+      content: const Text('You have permanently denied access to audio. Please grant access in the app settings.'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            openAppSettings(); // Open app settings so the user can grant the permission manually
+          },
+          child: const Text('Open Settings'),
+        ),
+        TextButton(
+          onPressed: () {
+            Get.back(); // Close the dialog
+          },
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
+  }
+
 }
